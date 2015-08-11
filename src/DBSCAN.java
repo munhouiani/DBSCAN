@@ -60,7 +60,7 @@ public class DBSCAN {
 
                 // next few tokens are the coordinate
                 for(int i = 1; i < token.length; i++) {
-                    point.coordinate.add(Integer.parseInt(token[i]));
+                    point.coordinate.add(Double.parseDouble(token[i]));
                 }
 
                 setOfPoints.append(point);

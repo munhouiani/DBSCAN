@@ -6,17 +6,17 @@ import java.util.LinkedList;
 public class Point {
     String id;          // point's id
     String ClId;        // which cluster does this point belong to
-    LinkedList<Integer> coordinate;   // the coordinate of this point
+    LinkedList<Double> coordinate;   // the coordinate of this point
 
-    public Point(String id, int ... coordinates) {
+    public Point(String id, double ... coordinates) {
         this.id = id;
         this.coordinate = new LinkedList<>();
-        for (int coordinate1 : coordinates) {
+        for (double coordinate1 : coordinates) {
             this.coordinate.add(coordinate1);
         }
     }
 
-    public Point(String id, LinkedList<Integer> coordinate) {
+    public Point(String id, LinkedList<Double> coordinate) {
         this.id = id;
         this.coordinate = coordinate;
     }
