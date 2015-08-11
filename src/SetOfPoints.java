@@ -14,13 +14,25 @@ public class SetOfPoints {
         return this.pointsList.size();
     }
 
-    public void ChangeClIds(Point point, String ClId) {
+    public void changeClIds(Point point, String ClId) {
         if(this.pointsList.contains(point)) {
             point.ClId = ClId;
         }
         else {
             // debug message
             System.out.println("From ChangeClIds: doesn't contain point " + point.id);
+        }
+    }
+
+    public void changeClIds(SetOfPoints setOfPoints, String ClId) {
+        for(int i = 0; i < setOfPoints.size(); i++) {
+            if(this.pointsList.contains(setOfPoints.get(i))) {
+                setOfPoints.get(i).ClId = ClId;
+            }
+            else {
+                // debug message
+                System.out.println("From ChangeClIds(setofpoints): doesn't contain point " + setOfPoints.get(i).id);
+            }
         }
     }
 
@@ -59,4 +71,17 @@ public class SetOfPoints {
 
         return setOfPoints;
     }
+
+    public Point get(int i) {
+        return pointsList.get(i);
+    }
+
+    public boolean isEmpty() {
+        return pointsList.isEmpty();
+    }
+
+    public Point first() {
+        return pointsList.get(0);
+    }
+
 }
