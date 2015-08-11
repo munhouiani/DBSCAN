@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -10,11 +11,15 @@ public class DBSCAN {
     private static String UNCLASSIFIED = "unclassified";
     private static String NOISE = "noise";
 
-    private ArrayList<Point> noiseList;
+    private SetOfPoints setOfNoise;
+
+    private HashMap<Integer, SetOfPoints> clusterList;
 
     public DBSCAN(String filePath, double Eps, int MinPts) {
 
-        noiseList = new ArrayList<>();
+        setOfNoise = new SetOfPoints();
+
+        clusterList = new HashMap<>();
 
         // build set of points from file
         SetOfPoints setOfPoints = build_SetOfPoints_from_file(filePath);
@@ -22,10 +27,16 @@ public class DBSCAN {
         // run dbscan
         dbscan(setOfPoints, Eps, MinPts);
 
+        // print result
+        output_cluster(clusterList);
+        System.out.println("Noise");
+        System.out.printf("Noise size: %d\n", setOfNoise.size());
+        setOfNoise.print();
+
     }
 
     public DBSCAN() {
-        this("/home/mhwong/Desktop/dbscan_dataset/2.3_Clustering.txt", 50, 50);
+        this("/home/mhwong/Desktop/dbscan_dataset/2.3_Clustering.txt", 10, 7);
     }
 
     private SetOfPoints build_SetOfPoints_from_file(String filePath) {
@@ -77,11 +88,31 @@ public class DBSCAN {
         SetOfPoints seeds = setOfPoints.regionQuery(point, Eps);
         if(seeds.size() < Minpts) { // no core point
             setOfPoints.changeClIds(point, NOISE);
-            noiseList.add(point);
+            setOfNoise.append(point);
             return false;
         }
         else { // all points in seeds are density-reachable from point
+            // remove from previous cluster
+            for(int i = 0; i < seeds.size(); i++) {
+                if(seeds.get(i).ClId.equals(NOISE)) {
+                    setOfNoise.delete(seeds.get(i));
+                }
+                else if(!seeds.get(i).ClId.equals(UNCLASSIFIED) && clusterList.containsKey(Integer.parseInt(seeds.get(i).ClId))) {
+                    SetOfPoints cluster = clusterList.get(Integer.parseInt(seeds.get(i).ClId));
+                    cluster.delete(seeds.get(i));
+                }
+            }
             setOfPoints.changeClIds(seeds, String.valueOf(clusterId));
+            if(clusterList.containsKey(clusterId)) {
+                SetOfPoints cluster = clusterList.get(clusterId);
+                cluster.addAll(seeds);
+                clusterList.put(clusterId, cluster);
+            }
+            else {
+                SetOfPoints cluster = new SetOfPoints();
+                cluster.addAll(seeds);
+                clusterList.put(clusterId, cluster);
+            }
             seeds.delete(point);
             while(!seeds.isEmpty()) {
                 Point currentP = seeds.first();
@@ -94,7 +125,26 @@ public class DBSCAN {
                             if(resultP.ClId.equals(UNCLASSIFIED)) {
                                 seeds.append(resultP);
                             }
+
+                            // remove from previous cluster list before any changes
+                            if(resultP.ClId.equals(NOISE)) {
+                                setOfNoise.delete(resultP);
+                            }
+                            else if(!resultP.ClId.equals(UNCLASSIFIED) && clusterList.containsKey(Integer.parseInt(resultP.ClId))) {
+                                SetOfPoints cluster = clusterList.get(Integer.parseInt(resultP.ClId));
+                                cluster.delete(resultP);
+                            }
                             setOfPoints.changeClIds(resultP, String.valueOf(clusterId));
+                            if(clusterList.containsKey(clusterId)) {
+                                SetOfPoints cluster = clusterList.get(clusterId);
+                                cluster.append(resultP);
+                                clusterList.put(clusterId, cluster);
+                            }
+                            else {
+                                SetOfPoints cluster = new SetOfPoints();
+                                cluster.append(resultP);
+                                clusterList.put(clusterId, cluster);
+                            }
                         }
                     }
                 }
@@ -102,5 +152,18 @@ public class DBSCAN {
             }
             return true;
         }
+    }
+
+    private void output_cluster(HashMap<Integer, SetOfPoints> clusterList) {
+        for(int clId: clusterList.keySet()) {
+            if(!clusterList.get(clId).isEmpty()) {
+                System.out.printf("Cluster id: %d\n", clId);
+                System.out.printf("Cluster size: %d\n", clusterList.get(clId).size());
+                clusterList.get(clId).print();
+                System.out.println();
+            }
+        }
+        System.out.println();
+        System.out.println();
     }
 }

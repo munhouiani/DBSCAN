@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by mhwong on 8/10/15.
@@ -64,7 +67,7 @@ public class SetOfPoints {
         SetOfPoints setOfPoints = new SetOfPoints();
         for(Point point1: this.pointsList) {
             double distance = calculate_distance(point, point1);
-            if(distance >= Eps) {
+            if(distance <= Eps) {
                 setOfPoints.append(point1);
             }
         }
@@ -84,4 +87,14 @@ public class SetOfPoints {
         return pointsList.get(0);
     }
 
+    public void print() {
+        Collections.sort(this.pointsList, (o1, o2) -> Integer.compare(Integer.parseInt(o1.id), Integer.parseInt(o2.id)));
+        for(Point point: pointsList) {
+            System.out.printf("%s ", point.id);
+        }
+    }
+
+    public void addAll(SetOfPoints setOfPoints) {
+        this.pointsList.addAll(setOfPoints.pointsList);
+    }
 }
