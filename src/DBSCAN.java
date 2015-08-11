@@ -36,7 +36,7 @@ public class DBSCAN {
     }
 
     public DBSCAN() {
-        this("/home/mhwong/Desktop/dbscan_dataset/2.3_Clustering.txt", 10, 7);
+        this("dataset/2.3_Clustering.txt", 1, 3);
     }
 
     private SetOfPoints build_SetOfPoints_from_file(String filePath) {
@@ -155,6 +155,8 @@ public class DBSCAN {
     }
 
     private void output_cluster(HashMap<Integer, SetOfPoints> clusterList) {
+        System.out.printf("Total number of clusters: %d\n", clusterList.size());
+        System.out.println();
         for(int clId: clusterList.keySet()) {
             if(!clusterList.get(clId).isEmpty()) {
                 System.out.printf("Cluster id: %d\n", clId);
@@ -163,7 +165,6 @@ public class DBSCAN {
                 System.out.println();
             }
         }
-        System.out.println();
         System.out.println();
     }
 }

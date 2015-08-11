@@ -89,9 +89,11 @@ public class SetOfPoints {
 
     public void print() {
         Collections.sort(this.pointsList, (o1, o2) -> Integer.compare(Integer.parseInt(o1.id), Integer.parseInt(o2.id)));
+        System.out.print("Points: ");
         for(Point point: pointsList) {
             System.out.printf("%s ", point.id);
         }
+        System.out.println();
     }
 
     public void addAll(SetOfPoints setOfPoints) {
