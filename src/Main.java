@@ -27,6 +27,6 @@ public class Main {
 
 
 
-        new DBSCAN();
+//        new DBSCAN();
     }
 }
